@@ -2993,22 +2993,15 @@ function calcs.offence(env, actor, activeSkill)
 
 		-- Calculate culling DPS
 		globalOutput.CullPercent = 0
-		ConPrintf("Calculating cull")
 		if skillModList:Flag(cfg, "CullingStrike") or skillModList:Flag(cfg, "CriticalCullingStrike") then
-			ConPrintf("Player has cull or crit cull")
 			local cullThreshold = 30
 			local enemyRarity = enemyDB:Sum("OVERRIDE", cfg, "EnemyRarity") -- 0=norm 1=magic 2=rare 3=unique
 			if enemyRarity == 3 then
 				cullThreshold = 5
-				ConPrintf("Enemy is unique")
 			elseif enemyRarity == 2 then
 				cullThreshold = 10
-				ConPrintf("Enemy is rare")
 			elseif enemyRarity == 1 then
 				cullThreshold = 20
-				ConPrintf("Enemy is magic")
-			else
-				ConPrintf("Enemy is normal")
 			end
 
 			local cullChance = 1
