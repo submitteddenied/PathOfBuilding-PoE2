@@ -1681,6 +1681,17 @@ Huge sets the radius to 11.
 	-- Section: Enemy Stats
 	{ section = "Enemy Stats", col = 2 },
 	{ var = "enemyLevel", type = "count", label = "Enemy Level:", tooltip = "This overrides the default enemy level used to estimate your hit and ^x33FF77evade ^7chance.\n\nThe default level for normal enemies and standard bosses is 83.\nTheir default level is capped by your character level.\n\nThe default level for pinnacle bosses is 84, and the default level for uber pinnacle bosses is 85.\nTheir default level is not capped by your character level." },
+	{ var = "enemyRarity", type = "list", label = "Enemy Rarity:", defaultIndex = 3, tooltip = "TODO: Tooltip", list = {{val="Normal",label="Normal"}, {val="Magic",label="^x8888FFMagic"}, {val="Rare", label="^xFFFF77Rare"}, {val="Unique",label="^xAF6025Unique"}}, apply = function(val, modList, enemyModList)
+		if val == "Normal" then
+			enemyModList:NewMod("EnemyRarity", "OVERRIDE", 0, "Rarity")
+		elseif val == "Magic" then
+			enemyModList:NewMod("EnemyRarity", "OVERRIDE", 1, "Rarity")
+		elseif val == "Rare" then
+			enemyModList:NewMod("EnemyRarity", "OVERRIDE", 2, "Rarity")
+		elseif val == "Unique" then
+			enemyModList:NewMod("EnemyRarity", "OVERRIDE", 3, "Rarity")
+		end
+	end },
 	{ var = "conditionEnemyRareOrUnique", type = "check", label = "Is the enemy Rare or Unique?", ifEnemyCond = "EnemyRareOrUnique", tooltip = "The enemy will automatically be considered to be Unique if they are a Boss,\nbut you can use this option to force it if necessary.", apply = function(val, modList, enemyModList)
 		enemyModList:NewMod("Condition:RareOrUnique", "FLAG", true, "Config", { type = "Condition", var = "Effective" })
 	end },

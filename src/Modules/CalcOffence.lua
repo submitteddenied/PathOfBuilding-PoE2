@@ -2992,13 +2992,31 @@ function calcs.offence(env, actor, activeSkill)
 		local hitRate = output.HitChance / 100 * (globalOutput.HitSpeed or globalOutput.Speed) * skillData.dpsMultiplier
 
 		-- Calculate culling DPS
-		local criticalCull = skillModList:Max(cfg, "CriticalCullPercent") or 0
-		if criticalCull > 0 then
-			criticalCull = m_min(criticalCull, criticalCull * (1 - (1 - output.CritChance / 100) ^ hitRate))
+		globalOutput.CullPercent = 0
+		ConPrintf("Calculating cull")
+		if skillModList:Flag(cfg, "CullingStrike") or skillModList:Flag(cfg, "CriticalCullingStrike") then
+			ConPrintf("Player has cull or crit cull")
+			local cullThreshold = 30
+			local enemyRarity = enemyDB:Sum("OVERRIDE", cfg, "EnemyRarity") -- 0=norm 1=magic 2=rare 3=unique
+			if enemyRarity == 3 then
+				cullThreshold = 5
+				ConPrintf("Enemy is unique")
+			elseif enemyRarity == 2 then
+				cullThreshold = 10
+				ConPrintf("Enemy is rare")
+			elseif enemyRarity == 1 then
+				cullThreshold = 20
+				ConPrintf("Enemy is magic")
+			else
+				ConPrintf("Enemy is normal")
+			end
+
+			local cullChance = 1
+			if skillModList:Flag(cfg, "CriticalCullingStrike") then
+				cullChance = output.CritChance
+			end
+			globalOutput.CullPercent = cullThreshold + (cullThreshold * (skillModList:Max(cfg, "CullingStrikeThreshold") or 0))
 		end
-		local regularCull = skillModList:Max(cfg, "CullPercent") or 0
-		local maxCullPercent = m_max(criticalCull, regularCull)
-		globalOutput.CullPercent = maxCullPercent
 		globalOutput.CullMultiplier = 100 / (100 - globalOutput.CullPercent)
 
 		--Calculate reservation DPS
